@@ -10,6 +10,11 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
+    /*background-image: url(/bg_forest.png);
+    background-repeat: repeat-x;
+    background-size: 100vw 100vh;
+    width: 100000px;*/
 }
 
 #main-container {
@@ -47,7 +52,7 @@ body {
 /* Ensure the containers can anchor the absolute label */
 
 #xth-container, #wry-container {
-    position: fixed;
+    position: absolute;
     width: 6vw;
     height: auto;
     bottom: 0;

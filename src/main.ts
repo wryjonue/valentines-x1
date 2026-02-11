@@ -34,16 +34,13 @@ let isXth = true;
 let playerID = "";
 let otherID = "";
 
-// State for "Your" character only
 let isMovingR = false;
 let isMovingL = false;
 let playerLeftPos = 0;
 
-window.onload = () => {
-    let name = prompt("Enter your name:");
-    isXth = name?.toLowerCase() === "xthliene";
 
-    // Define Roles
+window.onload = () => {
+
     playerID = isXth ? 'xth' : 'wry';
     otherID = isXth ? 'wry' : 'xth';
 
@@ -51,11 +48,8 @@ window.onload = () => {
     playerLeftPos = isXth ? 0 : 100;
 
     const playerContainer = document.getElementById(`${playerID}-container`)!;
-    const otherContainer = document.getElementById(`${otherID}-container`)!;
 
-    // Key Listeners
     document.addEventListener('keydown', (e) => {
-        // Support both Arrow keys and WASD for "The Player"
         if (e.code === 'ArrowRight' || e.code === 'KeyD') {
             if (!isMovingR) {
                 isMovingR = true;
@@ -70,6 +64,10 @@ window.onload = () => {
             }
         } else if (e.code === 'Enter') {
             handleChat();
+        } else if (e.code === 'KeyM') {
+            
+            isXth = false;
+            alert("Switched to Wry character! Refresh to switch back.");
         }
     });
 
@@ -79,7 +77,6 @@ window.onload = () => {
     });
 };
 
-// Unified Movement Loop
 function moveLoop(dir: 'R' | 'L') {
     const stillMoving = dir === 'R' ? isMovingR : isMovingL;
     const playerContainer = document.getElementById(`${playerID}-container`)!;
@@ -87,15 +84,13 @@ function moveLoop(dir: 'R' | 'L') {
     if (stillMoving) {
         playerLeftPos += (dir === 'R' ? 0.5 : -0.5);
         playerContainer.style.left = `${playerLeftPos}%`;
-
-        // Sync to Server
         socket.send(JSON.stringify({
             type: 'move',
             id: playerID,
             left: `${playerLeftPos}%`
         }));
 
-        setTimeout(() => moveLoop(dir), 30);
+        setTimeout(() => moveLoop(dir), 50);
     } else {
         playerContainer.style.animation = "";
     }
@@ -105,16 +100,13 @@ function moveLoop(dir: 'R' | 'L') {
 function handleChat() {
     const msg = prompt(`Message as ${playerID}:`);
     if (!msg) return;
-
     const myText = document.getElementById(`${playerID}-convo`)!;
     myText.innerText = msg;
-
     socket.send(JSON.stringify({ type: 'message', id: playerID, text: msg }));
-
     setTimeout(() => { myText.innerText = ""; }, 3000);
 }
 
-// Socket Listener (The "Other" person)
+
 let otherMoverTimeout: number;
 socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
