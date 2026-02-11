@@ -7,7 +7,9 @@ body {
     padding: 0;
     background-color: rgb(255, 255, 255);
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    text-align: center;
     align-items: center;
     height: 100vh;
     overflow: hidden;
@@ -26,15 +28,31 @@ body {
     justify-content: center;
     align-items: center;
     border-radius: 30px;
+    transform: translateY(-30vh);
     z-index: 10;
 }
-
+#pressspace {
+    
+    transform: translateY(-30vh);
+}
 .particles {
     display: block;
     position: fixed;
     width: 30px;
     height: 30px;
     font-size: 24px;
+}
+#particle-plate {
+    position: fixed;
+    left: 50%;
+    bottom: 100%;
+    width: 10vh;
+    height: 1vh;
+    background-color: violet;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 5;
+    transition: bottom 0.5s ease-in;
 }
 .char-label {
     position: absolute;
@@ -55,19 +73,23 @@ body {
     position: absolute;
     width: 6vw;
     height: auto;
-    bottom: 0;
     background-repeat: no-repeat;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: transform 0.5s ease-in-out, left 0.1s linear;
+    transition: transform 0.5s ease-in-out, left 0.1s linear, bottom 0.5s ease-in;
     & img {
         width: 100%;
         height: 100%;
         object-fit: contain;
     }
 }
-
+#xth-container {
+    bottom: 100%;
+}
+#wry-container {
+    bottom: 0;
+}
 @keyframes particleFloat {
     0% {
         bottom: 100%;

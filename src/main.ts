@@ -6,8 +6,10 @@ const RANDOM_PARTICLES: string[] = [
     '💔', '❤️‍🔥', '❤️‍🩹', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝',
     '🫀', '🍫'
 ];
-
-async function main() {
+let mainContainer: HTMLElement;
+let pressSpaceContainer: HTMLElement;
+let playerContainer: HTMLElement;
+async function particler() {
     const particles = document.createElement('div');
     particles.innerText = RANDOM_PARTICLES[Math.floor(random(RANDOM_PARTICLES.length))];
     particles.classList.add('particles');
@@ -17,18 +19,14 @@ async function main() {
     setTimeout(() => {
         particles.remove();
     }, 5000);
-    setTimeout(main, 100);
+    setTimeout(particler, 100);
 }
-
-
 
 function random(max: number): number {
     return Math.random() * max;
 }
 
 
-
-main();
 
 let isXth = true;
 let playerID = "";
@@ -40,15 +38,25 @@ let playerLeftPos = 0;
 
 
 window.onload = () => {
-
+    const urlParams = new URLSearchParams(window.location.search);
+    const playerParam = urlParams.get('player');
+    if (playerParam === 'wry') {
+        isXth = false;
+    }
     playerID = isXth ? 'xth' : 'wry';
     otherID = isXth ? 'wry' : 'xth';
-
-    // Set initial positions (Match your CSS/HTML)
+    
     playerLeftPos = isXth ? 0 : 100;
-
-    const playerContainer = document.getElementById(`${playerID}-container`)!;
-
+    playerContainer = document.getElementById(`${playerID}-container`)!;
+    mainContainer = document.getElementById('main-container')!;
+    pressSpaceContainer = document.getElementById('pressspace')!;
+    if (isXth) {
+        setTimeout(() => {
+            dialogueTyper();
+        }, 2000)
+    } else {
+        document.getElementById("xth-container")!.style.bottom = "0";
+    }
     document.addEventListener('keydown', (e) => {
         if (e.code === 'ArrowRight' || e.code === 'KeyD') {
             if (!isMovingR) {
@@ -65,9 +73,11 @@ window.onload = () => {
         } else if (e.code === 'Enter') {
             handleChat();
         } else if (e.code === 'KeyM') {
-            
+
             isXth = false;
-            alert("Switched to Wry character! Refresh to switch back.");
+            playerID = 'wry';
+            otherID = 'xth';
+            alert("Switched to Wryjonue! Refresh to switch back.");
         }
     });
 
@@ -96,9 +106,49 @@ function moveLoop(dir: 'R' | 'L') {
     }
 }
 
-// Unified Chat
+async function dialogueTyper() {
+    let dialogues = [
+        "Hello, Bebigurl!",
+        "Happy Valentine's Day! This is my present for you!",
+        "You will play as a character very submissive to this dialogue box.",
+        "Press ←/→ or A/D to move Xthliene.\n Walk to the pressure plate to continue.",
+        "Yay! You did it! I hope you like it!",
+        "Press Enter to have a chat",
+        "That's it! Enjoy your day! ❤️",
+        "Really, that's really it!",
+        "WHY ARE YOU STILL HERE??? GO ENJOY YOUR DAY!!!",
+        "FINE, THERE IS ONE LAST THING..."
+
+    ];
+    let tmpDialogue = "";
+    for (let j = 0; j < dialogues.length; j++) {
+        tmpDialogue = "";
+        for (let i = 0; i < dialogues[j].length; i++) {
+            const char = dialogues[j].charAt(i);
+            tmpDialogue += char;
+            mainContainer!.innerHTML = tmpDialogue.replace(/\n/g, '<br/>');
+            await wait(50);
+        }
+        switch (j) {
+            case 2:
+                await waitForSpace();
+                playerContainer.style.bottom = "0";
+                break;
+            case 3:
+                document.getElementById('particle-plate')!.style.bottom = "0"
+                await waitForPressurePlate();
+                break;
+            default:
+                await waitForSpace();
+                break;
+        }
+    };
+
+}
+
+
 function handleChat() {
-    const msg = prompt(`Message as ${playerID}:`);
+    const msg = prompt(`Enter your Message:`);
     if (!msg) return;
     const myText = document.getElementById(`${playerID}-convo`)!;
     myText.innerText = msg;
@@ -125,4 +175,33 @@ socket.onmessage = (event) => {
         targetText.innerText = data.text;
         setTimeout(() => { targetText.innerText = ""; }, 3000);
     }
+};
+
+function wait(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+function waitForSpace(): Promise<void> {
+    return new Promise((resolve) => {
+        pressSpaceContainer!.style.visibility = 'visible';
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.code === 'Space') {
+                pressSpaceContainer!.style.visibility = 'hidden';
+                window.removeEventListener('keydown', handleKey);
+                resolve();
+            }
+        };
+        window.addEventListener('keydown', handleKey);
+    });
+}
+function waitForPressurePlate(): Promise<void> {
+    return new Promise((resolve) => {
+        const tmpInterval = setInterval(() => {
+            if (parseInt(playerContainer.style.left) >= 50) {
+                particler();
+                document.getElementById('particle-plate')!.style.display = 'none';
+                clearInterval(tmpInterval);
+                resolve();
+            }
+        }, 100);
+    });
 };
