@@ -32,7 +32,6 @@ body {
     z-index: 10;
 }
 #pressspace {
-    
     transform: translateY(-30vh);
 }
 .particles {
@@ -46,9 +45,23 @@ body {
     position: fixed;
     left: 50%;
     bottom: 100%;
-    width: 10vh;
+    width: 5vw;
     height: 1vh;
     background-color: violet;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 5;
+    transition: bottom 0.5s ease-in;
+}
+#heart-plate {
+    position: fixed;
+    left: 1%;
+    bottom: 100%;
+    width: 5vw;
+    height: 5vh;
+    background-image: url(/heartshape.png);
+    background-size: contain;
+    background-repeat: no-repeat;
     pointer-events: none;
     overflow: visible;
     z-index: 5;

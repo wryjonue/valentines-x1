@@ -112,12 +112,14 @@ async function dialogueTyper() {
         "Happy Valentine's Day! This is my present for you!",
         "You will play as a character very submissive to this dialogue box.",
         "Press ←/→ or A/D to move Xthliene.\n Walk to the pressure plate to continue.",
+        "Nice, now walk to the heart pressure plate like a good girl.",
         "Yay! You did it! I hope you like it!",
-        "Press Enter to have a chat",
         "That's it! Enjoy your day! ❤️",
         "Really, that's really it!",
         "WHY ARE YOU STILL HERE??? GO ENJOY YOUR DAY!!!",
-        "FINE, THERE IS ONE LAST THING..."
+        "FINE, THERE IS ONE LAST THING...",
+        "Press Enter to have a chat",
+        " "
 
     ];
     let tmpDialogue = "";
@@ -137,6 +139,10 @@ async function dialogueTyper() {
             case 3:
                 document.getElementById('particle-plate')!.style.bottom = "0"
                 await waitForPressurePlate();
+                break;
+            case 4:
+                document.getElementById('heart-plate')!.style.bottom = "0";
+                await waitForHeartPlate();
                 break;
             default:
                 await waitForSpace();
@@ -197,8 +203,19 @@ function waitForPressurePlate(): Promise<void> {
     return new Promise((resolve) => {
         const tmpInterval = setInterval(() => {
             if (parseInt(playerContainer.style.left) >= 50) {
-                particler();
                 document.getElementById('particle-plate')!.style.display = 'none';
+                clearInterval(tmpInterval);
+                resolve();
+            }
+        }, 100);
+    });
+};
+function waitForHeartPlate(): Promise<void> {
+    return new Promise((resolve) => {
+        const tmpInterval = setInterval(() => {
+            if (parseInt(playerContainer.style.left) <= 1) {
+                particler();
+                document.getElementById('heart-plate')!.style.display = 'none';
                 clearInterval(tmpInterval);
                 resolve();
             }
